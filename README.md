@@ -21,3 +21,4 @@ A **machine learning-based Streamlit app** to detect whether a message or docume
 - **High Precision: Maintains 100% precision, ensuring reliable spam detection.
 
    ---
+## the working link is https://spamdetection-knhq2u2a4adhxxumb4ywr.streamlit.app/
