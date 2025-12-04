@@ -13,3 +13,11 @@ A **machine learning-based Streamlit app** to detect whether a message or docume
 - **Fast Predictions**: Powered by a trained **Multinomial Naive Bayes** model.  
 
 ---
+
+## Key highlights:
+
+- **High Accuracy: Achieves 95.93% accuracy on test data.
+
+- **High Precision: Maintains 100% precision, ensuring reliable spam detection.
+
+   ---
