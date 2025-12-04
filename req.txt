@@ -3,3 +3,5 @@ scikit-learn
 pandas
 matplotlib
 nltk
+streamlit
+PyPDF2
