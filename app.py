@@ -6,11 +6,22 @@ from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 import PyPDF2
 
-# Download NLTK data
-nltk.download('punkt')
-nltk.download('stopwords')
+# ----------------------------
+# Ensure required NLTK data is downloaded (deployment-friendly)
+# ----------------------------
+nltk_packages = ["punkt", "stopwords"]
+for pkg in nltk_packages:
+    try:
+        if pkg == "punkt":
+            nltk.data.find(f'tokenizers/{pkg}')
+        else:
+            nltk.data.find(f'corpora/{pkg}')
+    except LookupError:
+        nltk.download(pkg)
 
+# ----------------------------
 # Initialize
+# ----------------------------
 ps = PorterStemmer()
 stop_words = set(stopwords.words('english'))
 
@@ -18,7 +29,9 @@ stop_words = set(stopwords.words('english'))
 vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
 model = pickle.load(open("model.pkl", "rb"))
 
+# ----------------------------
 # Page configuration
+# ----------------------------
 st.set_page_config(
     page_title="📧 Spam Classifier",
     page_icon="📧",
@@ -50,13 +63,18 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# ----------------------------
 # Header
+# ----------------------------
 st.markdown('<div class="title">📧 SMS/Email/PDF Spam Classifier</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Detect whether a message or document is spam using ML</div>', unsafe_allow_html=True)
 
+# ----------------------------
 # Sidebar for PDF
+# ----------------------------
 st.sidebar.header("📄 PDF Spam Checker")
 uploaded_file = st.sidebar.file_uploader("Upload a PDF file", type=["pdf"])
+
 if st.sidebar.button("Check PDF"):
     if uploaded_file is None:
         st.sidebar.warning("Please upload a PDF file.")
@@ -67,8 +85,10 @@ if st.sidebar.button("Check PDF"):
             pdf_text += page.extract_text() + " "
 
         # Transform text
-        transform_sms = " ".join([ps.stem(word) for word in nltk.word_tokenize(pdf_text.lower())
-                                  if word.isalnum() and word not in stop_words and word not in string.punctuation])
+        transform_sms = " ".join([
+            ps.stem(word) for word in nltk.word_tokenize(pdf_text.lower())
+            if word.isalnum() and word not in stop_words and word not in string.punctuation
+        ])
         vector = vectorizer.transform([transform_sms])
         result = model.predict(vector)[0]
 
@@ -89,13 +109,17 @@ if st.sidebar.button("Check PDF"):
         st.markdown("**Transformed PDF Text:**")
         st.write(transform_sms)
 
+# ----------------------------
 # Main area for text message
+# ----------------------------
 st.markdown("### ✉️ Text Message Spam Checker")
 input_sms = st.text_area("Type your message here...", height=150)
 
 def predict_text(text):
-    transform_sms = " ".join([ps.stem(word) for word in nltk.word_tokenize(text.lower())
-                              if word.isalnum() and word not in stop_words and word not in string.punctuation])
+    transform_sms = " ".join([
+        ps.stem(word) for word in nltk.word_tokenize(text.lower())
+        if word.isalnum() and word not in stop_words and word not in string.punctuation
+    ])
     vector = vectorizer.transform([transform_sms])
     result = model.predict(vector)[0]
 
